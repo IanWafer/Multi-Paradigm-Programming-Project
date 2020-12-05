@@ -48,29 +48,51 @@ def read_customer(file_path):
             ps = ProductStock(p, quantity)
             c.shopping_list.append(ps)
         return c 
-        
 
 def print_product(p):
     print(f'\nPRODUCT NAME: {p.name} \nPRODUCT PRICE: {p.price}')
 
-def print_customer(c):
-    print(f'CUSTOMER NAME: {c.name} \nCUSTOMER BUDGET: {c.budget}')
-    
+def print_customer(c, s): # load in stock list s for price?
     for item in c.shopping_list:
-        print_product(item.product)
-        
-        print(f'{c.name} ORDERS {item.quantity} OF ABOVE PRODUCT')
-        cost = item.quantity * item.product.price
-        print(f'The cost to {c.name} will be €{cost}')
+        print(f'{c.name} wants {item.quantity} of the product {item.product.name}')
+
+
+        cost = item.quantity * s.stock.ProductStock.product.name.price
+        print(f'The cost to {c.name} will be €{cost}\n')
+
+    print(f'\nCustomer name is {c.name} and they have {c.budget} for their budget')
         
 def print_shop(s):
-    print(f'Shop has {s.cash} in cash')
+    print(f'\nShop has {s.cash} in cash')
     for item in s.stock:
         print_product(item.product)
-        print(f'The Shop has {item.quantity} of the above')
+        print(f'The Shop has {item.quantity} of the above\n')
 
-#s = create_and_stock_shop()
-#print_shop(s)
+def display_menu():
+    print("MENU")
+    print("====")
+    print("1- Choose pre loaded baskets")
+    print("2- Live mode")
+    print("3- Exit")
 
-c = read_customer("../customer.csv")
-print_customer(c)
+def main():
+    while True:
+        display_menu()
+        choice = input("Choice: ")
+        if (choice == "1"):
+            s = create_and_stock_shop()
+            print_shop(s)
+
+            c = read_customer("../customer.csv")
+            print_customer(c, s)
+            print(s.stock)
+
+            print(c.shopping_list)
+
+        elif (choice == "2"):
+            item = input("What would you like to buy?")
+            quantity = input("And how many?")
+            live_shopping_basket[item] = quantity
+
+if __name__ == "__main__":
+    main()

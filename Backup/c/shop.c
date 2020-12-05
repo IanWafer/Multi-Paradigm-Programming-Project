@@ -50,9 +50,7 @@ struct Customer custOrder()
 		strcpy(name, c);
 		struct Product product = { name };
 		struct ProductStock stockItem = { product, quantity };
-		double cost = quantity * product.price;
-		printf("\n%s wants %d of the product %s\n", customer.name, quantity, name);
-		printf("The cost to %s will be %d\n", customer.name, cost);
+		printf("%s wants %d of the product %s\n", customer.name, quantity, name);
 	}
 	return customer;
 }
@@ -120,36 +118,7 @@ double find(struct Shop s, char* name)
 	return -1;
 }
 
-int main(void)
-//{
-//
-//	struct  Customer customer = custOrder();
-//	printf("Customer name is %s and they have %.2f for their budget\n", customer.name, customer.budget);
-//	
-//	struct Product productA = { "Coke Can", 0.0 };
-//	struct Product productB = { "Big Bags", 0.0 };
-//	struct Product productC = { "Spaghetti", 0.0 };
-//	struct ProductStock StockA = { productA, 12 };
-//	struct ProductStock StockB = { productB, 5 };
-//	struct ProductStock StockC = { productC, 2 };
-//	
-//	struct ProductStock array[] = { StockA, StockB, StockC }; 
-//	
-//	struct Shop shop = createAndStockShop();
-//	
-//	double totalCostForCustomer = 0;
-//	for(int i=0; i < 3; i++){
-//		struct Product p = array[i].product;
-//		double price = find(shop, p.name);
-//		printf("The price of %s in the shop is %.2f\n", p.name, price);
-//		double totalCostOfItem = array[i].quantity * price;
-//		printf("You want %d of %s, that will cost you %.2f\n", array[i].quantity, p.name, totalCostOfItem);
-//		totalCostForCustomer += totalCostOfItem;
-//	}
-//	printf("The total cost for the customer will be %.2f\n", totalCostForCustomer);
-//	
-//    return 0;
-//} 
+int main(void) 
 {
 	struct Shop shop = createAndStockShop();
 	printShop(shop);
@@ -157,11 +126,11 @@ int main(void)
 	struct  Customer customer = custOrder();
 	printf("Customer name is %s and they have %.2f for their budget\n", customer.name, customer.budget);
 
-	//struct ProductStock array[] = {shop.stock}; //Need to convert this to read CSV file somehow
+	//struct ProductStock array[] = {customer.stockItem}; //Need to convert this to read CSV file somehow
 
 	//double totalCostForCustomer =  0;
 	//for(int i=1; i < 2; i++){
-
+	//	struct Product p = array[i].product;
 	//	double price = find(shop, p.name);
 	//	printf("The price of %s in the shop is %.2f\n", p.name, price);
 	//	double totalCostOfItem = array[i].quantity * price;
