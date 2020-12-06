@@ -111,6 +111,25 @@ def display_custmenu():
     print("4- Back")
     print("5- Exit")
 
+def live_mode():
+    cust_name = input("What is your name? ")
+    budget= float(input(f"And what is your budget today {cust_name}: "))
+    c = Customer(cust_name, budget)
+    print("That's great! The available products are listed below with quanities and prices noted.")
+    print_shop(s)
+    shopping_list=[]
+    additional_items = "Y"
+    while (additional_items == "Y"):
+        name = input("What would you like to purchase? Please note product description must match exactly: ")
+        quantity = int(input("And how many would you like? "))
+        p = Product(name)
+        ps = ProductStock(p, quantity)
+        c.shopping_list.append(ps)
+        additional_items = input("Would you like to order additional items? Y/N \n")
+
+    return c
+
+
 def main():
     while True:
         display_menu()
@@ -118,7 +137,7 @@ def main():
 
         if (choice == "1"):
             while True:
-                print("Customer test csv files available")
+                print("\nCustomer test csv files available-")
                 display_custmenu()
                 customer_type = input("Choice: ")
 
@@ -144,9 +163,8 @@ def main():
                     print("This is not a valid selection\n")
 
         elif (choice == "2"):
-            item = input("What would you like to buy?")
-            quantity = input("And how many?")
-            live_shopping_basket[item] = quantity
+            c = live_mode()
+            print_customer(c, s)
 
         elif (choice == "3"):
             print(f'\nThe shop has €{s.cash:.2f}\n')
