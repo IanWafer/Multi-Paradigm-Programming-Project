@@ -52,15 +52,25 @@ def read_customer(file_path):
 def print_product(p):
     print(f'\nPRODUCT NAME: {p.name} \nPRODUCT PRICE: {p.price}')
 
-def print_customer(c, s): # load in stock list s for price?
+def print_customer(c, s):
+    check_stock(c, s)
+    calculate_costs(c, s)
+    total_order = 0
     for item in c.shopping_list:
-        print(f'{c.name} wants {item.quantity} of the product {item.product.name}')
+        print(f'{c.name} wants {item.quantity:.0f} of the product {item.product.name}')
+        cost = item.quantity * item.product.price
+        total_order += cost
+        print(f'The cost to {c.name} will be €{cost:.2f}\n')
 
-
-        cost = item.quantity * s.stock.ProductStock.product.name.price
-        print(f'The cost to {c.name} will be €{cost}\n')
-
-    print(f'\nCustomer name is {c.name} and they have {c.budget} for their budget')
+    if total_order <= c.budget:
+        s.cash += total_order
+        print(f'Customer name is {c.name} and they have €{c.budget:.2f} for their budget.\nThe total price of the order for {c.name} is €{total_order:.2f}. Trasnaction complete.  {c.name} now  has {c.budget-total_order:.2f} remaining in their budget. Shop cash is now {s.cash}\n')
+        for item in c.shopping_list:
+            for prod in s.stock:
+                if item.product.name == prod.product.name:
+                    prod.quantity = prod.quantity - item.quantity
+    else:
+        print(f'Customer name is {c.name} and they have €{c.budget:.2f} for their budget.\nThe total price of the order for {c.name} is €{total_order:.2f}. {c.name} has insufficient fund to complete the transaction. {s.cash}\n')
         
 def print_shop(s):
     print(f'\nShop has {s.cash} in cash')
@@ -68,31 +78,89 @@ def print_shop(s):
         print_product(item.product)
         print(f'The Shop has {item.quantity} of the above\n')
 
+def check_stock(c, s):
+    for item in c.shopping_list:
+        for prod in s.stock:
+                if item.product.name == prod.product.name and item.quantity <= prod.quantity:
+                    print(item, item.quantity, prod.quantity)
+                    print("OK")
+                
+                elif item.product.name == prod.product.name and item.quantity > prod.quantity:
+                    print(f"We do not have enough stock of {item.product.name}, please re-select products to continue with your purchase.")
+                    main()
+
+def calculate_costs(c, s):
+    for shop_item in s.stock:
+        for list_item in c.shopping_list:
+            if (list_item.product.name == shop_item.product.name):
+                list_item.product.price = shop_item.product.price
+
 def display_menu():
     print("MENU")
     print("====")
     print("1- Choose pre loaded baskets")
     print("2- Live mode")
-    print("3- Exit")
+    print("3- Check cash")
+    print("4- Check shop stock")
+    print("5- Exit")
+
+def display_custmenu():
+    print("1- Standard")
+    print("2- Not enough in budget")
+    print("3- Quantities selected too great")
+    print("4- Back")
+    print("5- Exit")
 
 def main():
     while True:
         display_menu()
         choice = input("Choice: ")
+
         if (choice == "1"):
-            s = create_and_stock_shop()
-            print_shop(s)
+            while True:
+                print("Customer test csv files available")
+                display_custmenu()
+                customer_type = input("Choice: ")
 
-            c = read_customer("../customer.csv")
-            print_customer(c, s)
-            print(s.stock)
+                if (customer_type == "1"):
+                    c = read_customer("../Standard.csv")
+                    print_customer(c, s)
 
-            print(c.shopping_list)
+                elif (customer_type == "2"):
+                    c = read_customer("../Budget.csv")
+                    print_customer(c, s)
+
+                elif (customer_type == "3"):
+                    c = read_customer("../Quantity.csv")
+                    print_customer(c, s)
+
+                elif (customer_type ==  "4"):
+                    main()
+
+                elif (customer_type == "5"):
+                    exit()
+
+                else:
+                    print("This is not a valid selection\n")
 
         elif (choice == "2"):
             item = input("What would you like to buy?")
             quantity = input("And how many?")
             live_shopping_basket[item] = quantity
 
+        elif (choice == "3"):
+            print(f'\nThe shop has €{s.cash:.2f}\n')
+            
+        elif (choice == "4"):
+            print_shop(s)  
+
+        elif (choice == "5"):
+            exit()
+
+        else:
+            print("This is not a valid selection\n")
+
 if __name__ == "__main__":
+    s = create_and_stock_shop()
+    print_shop(s)
     main()
