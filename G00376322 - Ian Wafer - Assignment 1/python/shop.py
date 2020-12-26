@@ -129,7 +129,6 @@ def live_mode():
 
     return c
 
-
 def main():
     while True:
         display_menu()
