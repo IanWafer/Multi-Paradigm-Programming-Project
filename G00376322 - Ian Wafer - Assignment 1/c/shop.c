@@ -220,20 +220,22 @@ void liveMode(struct Shop s)
 			s.stock[i].quantity -= customer.shoppingBasket[i].quantity; 
 			printf("%i",  s.stock[i].quantity);
 			printShop(s);
+			printf("%f", customer.budget);
+			printf("%f", customer.totalCost);
 			}
-			
 
-	//		if (customer.budget < customer.totalCost){
-	//			printf("The total price of the order for %s is €%.2f. %s has insufficient fund to complete the transaction.\n", customer.name, customer.totalCost, customer.name);
-	//			display_menu(s);
-	//	}
-	//		
-	//	s.cash +=  customer.totalCost;
-	//	customer.budget -= customer.totalCost;
-//
-	//	printf("The total price for the order for %s will be €%.2f. Transaction complete. %s now has €%.2f remaining in their budget. Shop cash is now €%.2f\n", customer.name, customer.totalCost, customer.name, customer.budget, s.cash);
-	//printf("TEST2");	
-}
+
+			if (customer.budget < customer.totalCost){
+				printf("The total price of the order for %s is €%.2f. %s has insufficient fund to complete the transaction.\n", customer.name, customer.totalCost, customer.name);
+				display_menu(s);
+		}
+			
+		s.cash +=  customer.totalCost;
+		customer.budget -= customer.totalCost;
+
+		printf("The total price for the order for %s will be €%.2f. Transaction complete. %s now has €%.2f remaining in their budget. Shop cash is now €%.2f\n", customer.name, customer.totalCost, customer.name, customer.budget, s.cash);
+	printf("TEST2");
+}	
 
 void display_custmenu(struct Shop s)
 {
