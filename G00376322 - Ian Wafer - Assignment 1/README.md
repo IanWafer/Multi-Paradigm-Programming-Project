@@ -1,11 +1,15 @@
 # Multi Paradigm Programming Assignment 1
 
 Lecturer: Dr. Dominic Carr
+
 Due Date: 31/12/20
 
 Student: Ian Wafer
+
 Student ID: G00376322
+
 Student Email: G00376322@gmit.ie
+
 Alternative Email: ianwafer@gmail.com
 
 ### Introduction-
