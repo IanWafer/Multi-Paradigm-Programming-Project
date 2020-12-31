@@ -128,7 +128,7 @@ class Live_mode:
             except ValueError:
                 print("\nPlease enter an integer value for the quantity. Restarting order process...\n")
                 Live_mode()
-
+    
             prod = Product(name)
             prod_st = ProductStock(prod, quantity)
             self.shopping_list.append(prod_st)
