@@ -1,5 +1,6 @@
 import csv
 
+# Create class blueprints to be used for constructing objects
 class Product:
 
     def __init__(self, name, price=0):
@@ -24,11 +25,12 @@ class ProductStock:
     def cost(self):
         return self.unit_price() * self.quantity
         
-    def __repr__(self): # The __repr__  function is used to return a printable representation of the object
+    def __repr__(self): 
         return f"{self.product} \nThe shop  has {self.quantity:.0f} of the above"
 
 class Customer:
-
+    
+    # Extract data from csv file and apply to classes above to create customer object
     def __init__(self, file_path):
         self.shopping_list = []
         with open(file_path) as csv_file:
@@ -43,21 +45,26 @@ class Customer:
                 prod_st = ProductStock(prod, quantity)
                 self.shopping_list.append(prod_st) 
     
-    def __repr__(self): # The __repr__  function is used to return a printable representation of the object
+    def __repr__(self): 
         str = f""
-        Customer.check_stock(self)
-        Customer.calculate_costs(self, shop.stock) # Determine the cost of the item from t  he matching name in the shop
+        Customer.check_stock(self)                  # Check stock levels are adequate to cover customers order
+        Customer.calculate_costs(self, shop.stock)  # Determine the cost of the item from the matching name in the shop
         str += f"Customer name is {self.name} and they have €{self.budget:.2f} for their budget.\n"
-        for item in self.shopping_list:
+
+        # Iterate through items in shopping list to determine price
+        for item in self.shopping_list: 
             cost = item.cost()
             #str += f"\n{item}"
-            if (cost == 0):
+
+            # Check item exists within shop
+            if (cost == 0): 
                 print(f"The product {item.product.name} cannot be found. Please enter a name matching the shop stock shown above.")
                 Menu().main()
             else:
                 str += f"\n{self.name} wants {item.quantity:.0f} of the product {item.product.name}.\n"
                 str += f"The cost to {self.name} will be €{cost:.2f}\n"
-                
+        
+        # Check if customer has enough in budget to fulfill the order. Adjust shop cash and stock levels accordingly
         if Customer.order_cost(self) <=  self.budget:
             shop.cash += Customer.order_cost(self)
             str += f"\nThe total price of the order for {self.name} is €{Customer.order_cost(self):.2f}. Transaction complete. {self.name} now has €{self.budget - Customer.order_cost(self):.2f} remaining in their budget. Shop cash is now €{shop.cash:.2f}."
@@ -66,10 +73,12 @@ class Customer:
                     if item.product.name == prod.product.name:          # If names are equal then adjust quantities outlined below
                         prod.quantity = prod.quantity - item.quantity   # Update shop quantities to reflect purchased goods taken from shop stock
         else:
-            str += f"\nThe total price of the order for {self.name} is €{Customer.order_cost(self):.2f}. {self.name} has insufficient fund to complete the transaction.\n"
+            str += f"\nThe total price of the order for {self.name} is €{Customer.order_cost(self):.2f}. {self.name} has insufficient funds to complete the transaction.\n"
 
         return str
 
+
+    # Calculate total order cost
     def order_cost(self):
         total_order = 0
         
@@ -78,31 +87,48 @@ class Customer:
         
         return total_order
 
+    # Calculate each items price from the shop list
     def calculate_costs(self, price_list):
         for shop_item in price_list:                # Iterate through individual items in shop stock 
             for list_item in self.shopping_list:    # Iterate the item pulled from shop stock list through the customer shopping list 
                 if (list_item.name() == shop_item.name()):              # If names are equal then adjust price in the shopping list outlined below
-                    list_item.product.price = shop_item.unit_price()    # Update shopping list price to match shop  price
+                    list_item.product.price = shop_item.unit_price()    # Update shopping list price to match shop price
 
+    # Check shop has adequate stocks to fulfill order
     def check_stock(self):
         for item in self.shopping_list:
             for prod in shop.stock:
                     if item.product.name == prod.product.name and item.quantity > prod.quantity:
                         print(f"\nWe do not have enough stock of {item.product.name}, please re-select products to continue with your purchase.\n")
-                        Menu().main()
+                        Menu().custmenu()
 
 class Live_mode:
     
+    # Live mode for customer to enter their own orders
     def __init__(self):
         self.name = input("What is your name? ")
-        self.budget= float(input(f"And what is your budget today {self.name}: €"))
+
+        # Check for input error by user
+        try:
+            self.budget= float(input(f"And what is your budget today {self.name}: €"))
+        except ValueError:
+            print("\nPlease enter a float value for the budget. Restarting order process...\n")
+            Live_mode()
+
         print("That's great! The available products are listed below with quantities and prices noted.")
         print(shop)
-        self.shopping_list=[]
-        additional_items = "Y"
+        self.shopping_list=[]   # Create empty array for input
+        additional_items = "Y"  # Create starting condition to open while loop
         while (additional_items == "Y"):
             name = input("What would you like to purchase? Please note product description must match exactly: ")
-            quantity = int(input("And how many would you like? "))
+            
+            # Check for input error by user
+            try:
+                quantity = int(input("And how many would you like? "))
+            except ValueError:
+                print("\nPlease enter an integer value for the quantity. Restarting order process...\n")
+                Live_mode()
+
             prod = Product(name)
             prod_st = ProductStock(prod, quantity)
             self.shopping_list.append(prod_st)
@@ -114,7 +140,7 @@ class Live_mode:
 class Shop:
     
     def __init__(self, file_path):
-        # Stock shop  from csv file received
+        # Stock shop from csv file received
         self.stock = []
         with open(file_path) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=",")
@@ -125,6 +151,7 @@ class Shop:
                 prod_st = ProductStock(prod, float(row[2]))
                 self.stock.append(prod_st)
     
+    # Display shop stock levels and cash
     def __repr__(self):
         str = ""
         str += f"\nShop has €{self.cash:.2f} in cash\n"
@@ -133,6 +160,8 @@ class Shop:
         return str
 
 class Menu:
+
+    # Main menu displayed when shop is run
     def display_menu(self):
         print("MENU")
         print("====")
@@ -142,6 +171,31 @@ class Menu:
         print("4- Check shop cash & stock")
         print("5- Exit")
 
+    # Main menu options
+    def main(self):
+        while True:
+            self.display_menu()
+            choice = input("Choice: ")
+
+            if (choice == "1"):
+                self.custmenu()
+            elif (choice == "2"):
+                cust= Live_mode()
+                print(cust)
+
+            elif (choice == "3"):
+                print(f"\nThe shop has €{shop.cash:.2f}\n")
+                
+            elif (choice == "4"):
+                print(shop)  
+
+            elif (choice == "5"):
+                exit()
+
+            else:
+                print("This is not a valid selection\n")
+
+    # Sub menu for displaying customer pre loaded baskets 
     def display_custmenu(self):
             print("1- Standard")
             print("2- Not enough in budget")
@@ -149,13 +203,9 @@ class Menu:
             print("4- Back")
             print("5- Exit")
 
-    def main(self):
+    # Sub menu options
+    def custmenu(self):
         while True:
-            self.display_menu()
-            choice = input("Choice: ")
-
-            if (choice == "1"):
-                while True:
                     print("\nCustomer test csv files available-")
                     self.display_custmenu()
                     customer_type = input("Choice: ")
@@ -180,22 +230,6 @@ class Menu:
 
                     else:
                         print("This is not a valid selection. Please re-select.\n")
-
-            elif (choice == "2"):
-                cust= Live_mode()
-                print(cust)
-
-            elif (choice == "3"):
-                print(f"\nThe shop has €{shop.cash:.2f}\n")
-                
-            elif (choice == "4"):
-                print(shop)  
-
-            elif (choice == "5"):
-                exit()
-
-            else:
-                print("This is not a valid selection\n")
 
 if __name__=="__main__":
     shop = Shop("../stock.csv")
